@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
 import { EvidenceLink } from '../components/EvidenceLink';
@@ -93,6 +94,15 @@ export default function Settings() {
             </button>
           ))}
         </fieldset>
+      </section>
+
+      <section>
+        <h2>iPhone &amp; iPad</h2>
+        <p>
+          <Link className="settings-link" to="/install">
+            Install on the Home Screen
+          </Link>
+        </p>
       </section>
 
       <section>

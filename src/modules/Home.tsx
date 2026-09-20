@@ -23,6 +23,7 @@ export default function Home() {
       <div className="home-links">
         <Link to="/dashboard">My progress</Link>
         <Link to="/settings">Settings</Link>
+        <Link to="/install">Install on iPhone/iPad</Link>
         <Link to="/evidence">Research &amp; evidence</Link>
       </div>
     </Page>

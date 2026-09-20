@@ -7,9 +7,11 @@ the evidence is auditable. It is the long-form companion to the in-app
 `src/lib/evidence.ts`.
 
 **Compiled:** 20 September 2026.
-**Source reports:** the four research reports in the project's research
-directory (`01-guidelines-dose.md`, `02-cognition.md`, `03-language-vision.md`,
-`04-digital-safety-privacy.md`).
+**Research basis:** five research workstreams were completed before the build:
+guideline/dose, cognition, language/vision, digital safety/privacy, and Apple
+iPhone/iPad platform accessibility. Their findings, limitations, and primary
+source links are synthesized here and in `docs/RESEARCH_METHOD.md` and
+`docs/APPLE_PLATFORM.md`.
 
 > **The one thing to remember:** improving a score on a trained task is not the
 > same as improving everyday life. Much of the evidence shows near-transfer
@@ -53,6 +55,7 @@ driving, work. These are deliberately kept separate.
 | **Caregiver support** | Simmons-Mackie 2010; ARMed4Stroke 2024/25; ASHA | MODERATE | Mainly benefits the caregiver (burden/QoL); no patient mobility gain shown. | Communication tips, self-care reminders, escalation guidance. Does NOT claim to improve the patient's recovery. |
 | **Session length & pacing** | NICE NG236; VA/DoD CPG 2024; Liu et al. 2025; fatigue (38–77%); npj Digital Medicine 2024 | LOW | No guideline sets an app session length. "≤30 min is better" is an exploratory, confounded subgroup finding. 20–30 min = tolerability default, not an optimum. | Defaults to 15 min, caps at 30 (60 only with clinician/carer override), fatigue check, rest prompts, stop-anytime. Never claims "30 min is optimal". |
 | **Accessible design** | Rose 2003; aphasia-friendly materials; 2026 accessibility study | MODERATE | Modest effect (~11% comprehension gain in one study); design-led rather than trial-based. | Large targets, scalable type, high contrast, keyboard nav, screen-reader semantics, read-aloud, no time pressure. |
+| **Apple iPhone/iPad platform** | Apple/WebKit; WCAG 2.2; `05-apple-ios-ipad.md` | EXPERT CONSENSUS / PLATFORM CAPABILITY | Home Screen install is manual; Web Push is installed-PWA only; programmatic browser dictation is not reliable in Home Screen web apps. | iPhone/iPad-first PWA, safe-area support, 44px targets, zoom/scalable text, reduced motion, install guide; unsupported native capabilities remain roadmap items. |
 | **Local-first privacy** | Cloudflare HIPAA; FTC HBNR; FDA General Wellness | EXPERT CONSENSUS | Not a HIPAA-covered service (BAA would need Enterprise plan). A non-HIPAA health app still falls under FTC HBNR. | On-device storage only, no server datastore, no PHI, synthetic data, no HIPAA claim, wellness-adjunct positioning. |
 | **Emergency stroke warning** | AHA/ASA stroke warning signs (FAST) | EXPERT CONSENSUS | Static safety information, not personalised advice. | Persistent FAST banner + onboarding reinforcement. Never interprets symptoms. |
 

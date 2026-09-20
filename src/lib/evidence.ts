@@ -1,5 +1,5 @@
 // Evidence registry — the single source of truth that maps every app feature
-// back to the four research reports in ../Documents/stroke-recovery-research.
+// back to the five research reports in ../Documents/stroke-recovery-research.
 //
 // This file exists so that:
 //   1. Every module can render a "Why this is here" link (see EvidenceLink.tsx).
@@ -342,6 +342,32 @@ export const EVIDENCE: EvidenceEntry[] = [
       {
         label: '2026 accessibility study — single-page + voiceover improved post-stroke performance',
         url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12916776',
+      },
+    ],
+  },
+  {
+    id: 'apple-platform',
+    title: 'iPhone & iPad platform',
+    why: 'iPhone and iPad are the reference devices for this app. Apple and web accessibility guidance support an installable web app with large touch targets, scalable text, VoiceOver-friendly semantics, reduced motion and offline support.',
+    strength: 'EXPERT CONSENSUS',
+    evidenceScope:
+      'A PLATFORM and accessibility decision, not a rehabilitation treatment claim.',
+    limitations:
+      'Home Screen installation is manual in Safari. Web Push requires an installed web app and server-side subscription handling. Programmatic browser speech recognition is not reliable in iOS Home Screen web apps; native iOS would be needed for that capability and for App Store distribution.',
+    appBehavior:
+      'The app is an installable PWA designed first for iPhone/iPad, uses safe-area insets and 44px touch targets, preserves zoom and scalable text, supports reduced motion and read-aloud, provides an Add to Home Screen guide, and does not pretend unsupported web features are native capabilities.',
+    sources: [
+      {
+        label: 'WebKit — Web Push for Web Apps on iOS and iPadOS',
+        url: 'https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/',
+      },
+      {
+        label: 'W3C — Web Content Accessibility Guidelines (WCAG) 2.2',
+        url: 'https://www.w3.org/TR/WCAG22/',
+      },
+      {
+        label: 'Apple — Accessibility for developers',
+        url: 'https://developer.apple.com/accessibility/',
       },
     ],
   },

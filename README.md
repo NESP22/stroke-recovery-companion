@@ -48,6 +48,20 @@ Every feature is backed by a written evidence trail: an in-app
 React + TypeScript + Vite (PWA), deployed to Cloudflare Pages. No backend
 service is required — the app is fully static and client-side.
 
+### Apple-first MVP
+
+iPhone and iPad are the reference devices for v0.1. In Safari, open the
+in-app **Install on iPhone/iPad** guide and use **Share → Add to Home Screen**.
+The installed PWA is the preferred Apple experience for offline use and local
+persistence. The interface accounts for safe areas, 44px+ touch targets,
+scalable text, reduced motion, portrait iPhone, and portrait/landscape iPad.
+
+Current web limitations are documented rather than hidden: programmatic browser
+dictation is not relied on (use the iOS keyboard microphone instead), Web Push
+is not enabled in v0.1, and App Store distribution / native-only capabilities
+remain future work. The platform research synthesis and implementation
+decisions are documented in `docs/APPLE_PLATFORM.md`.
+
 ## Development
 
 ```bash

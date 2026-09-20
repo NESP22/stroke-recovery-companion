@@ -102,6 +102,7 @@ function draw(size, { rounded }) {
 }
 
 for (const [name, size, rounded] of [
+  ['apple-touch-icon-180.png', 180, true],
   ['icon-192.png', 192, true],
   ['icon-512.png', 512, true],
   ['icon-maskable-512.png', 512, false],

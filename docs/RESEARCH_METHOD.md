@@ -5,8 +5,11 @@ gathered and rated, so the basis for every feature can be re-examined.
 
 ## What the evidence base is (and is not)
 
-The four source reports are research syntheses prepared by evidence agents in
-September 2026. They draw on:
+Five source reports were prepared by evidence agents in September 2026:
+guideline/dose, cognition, language/vision, digital safety/privacy, and Apple
+iPhone/iPad platform/accessibility. Their claims and citations are distilled
+into `docs/EVIDENCE.md`, the in-app evidence registry, and
+`docs/APPLE_PLATFORM.md`. They draw on:
 
 1. **National/international clinical guidelines** (highest-priority): NICE NG236
    (UK, 2023), VA/DoD Stroke Rehabilitation CPG v5.0 (US, 2024), Canadian Stroke
@@ -21,6 +24,9 @@ September 2026. They draw on:
 4. **Primary regulatory sources** for privacy/safety: Cloudflare's HIPAA
    guidance, the FTC Health Breach Notification Rule, and FDA General Wellness /
    Device Software Functions guidance.
+5. **Primary platform/accessibility sources** for the Apple-first implementation:
+   Apple/WebKit documentation and W3C/WCAG 2.2, supplemented by high-quality
+   usability research for older adults and cognitive impairment.
 
 ## Source hierarchy (order of precedence)
 

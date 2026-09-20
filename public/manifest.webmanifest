@@ -2,6 +2,7 @@
   "name": "Stroke Recovery Companion",
   "short_name": "SRC",
   "description": "Privacy-first, local-first helper to support clinician-directed stroke rehabilitation. Not a medical device and not medical advice.",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

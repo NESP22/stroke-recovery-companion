@@ -86,6 +86,7 @@ h3 {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .app-main {
@@ -93,7 +94,10 @@ h3 {
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
-  padding: 1rem 1rem 2rem;
+  padding-top: 1rem;
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  padding-left: max(1rem, env(safe-area-inset-left));
 }
 
 .loading {
@@ -105,7 +109,10 @@ h3 {
 .emergency-banner {
   background: #8f1d1d;
   color: #ffffff;
-  padding: 0.75rem 1.25rem;
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+  padding-bottom: 0.75rem;
+  padding-left: max(1.25rem, env(safe-area-inset-left));
 }
 .emergency-banner strong {
   font-size: 1.05rem;
@@ -126,7 +133,10 @@ h3 {
 /* ---------- Disclaimer ---------- */
 .disclaimer {
   border-top: 2px solid var(--border);
-  padding: 0.75rem 1.25rem;
+  padding-top: 0.75rem;
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  padding-left: max(1.25rem, env(safe-area-inset-left));
   font-size: 0.85rem;
   color: var(--text-muted);
 }
@@ -147,6 +157,10 @@ h3 {
   flex: 1;
 }
 .back-link {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
   font-weight: 600;
   text-decoration: none;
   padding: 0.5rem 0;
@@ -284,9 +298,16 @@ html[data-high-contrast='true'] .admonition.warning {
 }
 .home-links {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
   margin-top: 1.5rem;
   font-weight: 600;
+}
+.home-links a,
+.settings-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 /* ---------- Choice chips / goals ---------- */
@@ -724,14 +745,36 @@ html[data-reduce-motion='true'] *::after {
     font-size: 3rem;
   }
   .neglect-cell {
-    width: 40px;
+    width: 44px;
     height: 48px;
     font-size: 1.3rem;
   }
   .rating-button {
-    min-width: 36px;
+    min-width: 44px;
     min-height: 44px;
   }
 }
 
 
+
+/* ---------- Apple install / tablet layout ---------- */
+.install-steps {
+  padding-left: 1.5rem;
+}
+.install-steps li {
+  margin-bottom: 1rem;
+  padding-left: 0.25rem;
+}
+@media (min-width: 768px) {
+  .app-main {
+    max-width: 900px;
+  }
+  .module-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) and (orientation: landscape) {
+  .module-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

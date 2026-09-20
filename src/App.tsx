@@ -17,6 +17,7 @@ import Caregiver from './modules/Caregiver';
 import Dashboard from './modules/Dashboard';
 import Evidence from './modules/Evidence';
 import Settings from './modules/Settings';
+import Install from './modules/Install';
 
 export default function App() {
   const { profile, ready } = useProfile();
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="/caregiver" element={<Caregiver />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/install" element={<Install />} />
             <Route path="/evidence" element={<Evidence />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
