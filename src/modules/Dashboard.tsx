@@ -52,18 +52,22 @@ export default function Dashboard() {
 
       <div className="stat-grid">
         <div className="stat-card">
+          <span className="stat-icon" aria-hidden="true">🏁</span>
           <span className="stat-number">{recordsReady ? records.length : '…'}</span>
           <span className="stat-label">Sessions completed</span>
         </div>
         <div className="stat-card">
+          <span className="stat-icon" aria-hidden="true">⏱️</span>
           <span className="stat-number">{recordsReady ? totalMinutes : '…'}</span>
           <span className="stat-label">Minutes practised</span>
         </div>
         <div className="stat-card">
+          <span className="stat-icon" aria-hidden="true">📅</span>
           <span className="stat-number">{recordsReady ? daysPracticed : '…'}</span>
           <span className="stat-label">Days practised</span>
         </div>
         <div className="stat-card">
+          <span className="stat-icon" aria-hidden="true">🔥</span>
           <span className="stat-number">{recordsReady ? streak : '…'}</span>
           <span className="stat-label">Day streak</span>
         </div>

@@ -7,11 +7,16 @@ import { formatDateLong, greeting } from '../lib/time';
 export default function Home() {
   return (
     <Page title={greeting()}>
-      <p className="lead">{formatDateLong()}</p>
-
-      <Link className="btn btn-primary btn-lg session-cta" to="/session">
-        Start today’s session
-      </Link>
+      <div className="home-hero">
+        <p className="home-date">{formatDateLong()}</p>
+        <h2 className="home-hero-title">What would you like to do today?</h2>
+        <Link className="btn btn-primary btn-lg session-cta" to="/session">
+          <span className="cta-icon" aria-hidden="true">
+            ▶
+          </span>
+          Start today’s session
+        </Link>
+      </div>
 
       <h2>Practice areas</h2>
       <div className="module-grid">

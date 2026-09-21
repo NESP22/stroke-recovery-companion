@@ -3,6 +3,8 @@ import type { ModuleId } from '../types';
 export interface ModuleMeta {
   id: ModuleId;
   title: string;
+  /** Emoji icon — rendered aria-hidden (decorative), text remains the label. */
+  icon: string;
   description: string;
   /** Rough estimated minutes for a single use — used to build a session plan. */
   estimateMinutes: number;
@@ -16,6 +18,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'orientation',
     title: 'Orientation',
+    icon: '🕐',
     description: 'A calm reminder of the date, time, season and your daily routine.',
     estimateMinutes: 2,
     inSession: true,
@@ -24,6 +27,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'memory',
     title: 'Memory',
+    icon: '🧠',
     description: 'Spaced retrieval, errorless-style practice and external reminder prompts.',
     estimateMinutes: 8,
     inSession: true,
@@ -32,6 +36,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'attention',
     title: 'Attention',
+    icon: '🎯',
     description: 'Gentle focus practice with reduced distractions and adjustable difficulty.',
     estimateMinutes: 6,
     inSession: true,
@@ -40,6 +45,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'executive',
     title: 'Problem-solving',
+    icon: '🧩',
     description: 'Goal–Plan–Do–Check steps for everyday tasks.',
     estimateMinutes: 8,
     inSession: true,
@@ -48,6 +54,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'aphasia',
     title: 'Language & words',
+    icon: '💬',
     description: 'Word-finding and communication support. Adjunct to speech-language therapy.',
     estimateMinutes: 8,
     inSession: true,
@@ -56,6 +63,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'neglect',
     title: 'Visual scanning',
+    icon: '👀',
     description: 'Practice looking to one side, with safety wording throughout.',
     estimateMinutes: 6,
     inSession: true,
@@ -64,6 +72,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'adl',
     title: 'Daily routines',
+    icon: '✅',
     description: 'Checklists for morning, meal and evening routines.',
     estimateMinutes: 4,
     inSession: true,
@@ -72,6 +81,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'mood',
     title: 'Mood & fatigue',
+    icon: '😊',
     description: 'A simple self-check with signposting to support. Not a diagnosis.',
     estimateMinutes: 3,
     inSession: true,
@@ -80,6 +90,7 @@ export const MODULES: ModuleMeta[] = [
   {
     id: 'caregiver',
     title: 'Caregiver support',
+    icon: '🤝',
     description: 'Communication tips, self-care reminders and guidance for helpers.',
     estimateMinutes: 5,
     inSession: false,
