@@ -405,6 +405,26 @@ html[data-high-contrast='true'] .admonition.warning {
   min-height: 44px;
 }
 
+/* ---------- Settings ---------- */
+.settings-field {
+  display: block;
+  font-weight: 700;
+  margin: 0.75rem 0 0.35rem;
+}
+.settings-select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 48px;
+  padding: 0.6rem;
+  border: 2px solid var(--secondary-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
 /* ---------- Choice chips / goals ---------- */
 .choice-group {
   border: none;

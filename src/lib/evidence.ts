@@ -417,7 +417,7 @@ export const EVIDENCE: EvidenceEntry[] = [
     limitations:
       'The effect of aphasia-friendly formatting is modest (one study found ~11% more knowledge). Most guidance is small-sample or design-led rather than large trials, so it is a low-risk, high-value requirement rather than a proven therapy.',
     appBehavior:
-      'The app uses large touch targets, scalable type, high-contrast option, keyboard navigation, screen-reader semantics, plain language, one task per screen, optional read-aloud, and no default time pressure.',
+      'The app uses large touch targets, scalable type, high-contrast option, keyboard navigation, screen-reader semantics, plain language, one task per screen, optional read-aloud with local English voice selection, preview/stop and speed preferences, and no default time pressure. Voice preferences are accessibility choices, not a claim of therapeutic benefit or guaranteed voice quality.',
     sources: [
       {
         label: 'Rose et al. 2003 — aphasia-friendly health information improves comprehension',

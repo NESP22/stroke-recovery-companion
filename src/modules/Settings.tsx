@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
+import { ReadAloudSettings } from '../components/ReadAloudSettings';
 import { EvidenceLink } from '../components/EvidenceLink';
 import { useProfile } from '../context/ProfileContext';
 import { getStore } from '../lib/storage';
+import { clearSpeechSettings, stopSpeaking } from '../lib/speech';
 import { allowedSessionOptions } from '../lib/sessionPolicy';
 import { clearPersonalizationFallbacks } from '../lib/personalizationStorage';
 import { clearOutcomeFallbacks } from '../lib/outcomeStorage';
@@ -17,6 +19,8 @@ export default function Settings() {
       'Clear all data on this device? This removes your goals, sessions and check-ins. It cannot be undone.',
     );
     if (!ok) return;
+    stopSpeaking();
+    clearSpeechSettings();
     await getStore().clear();
     clearPersonalizationFallbacks();
     clearOutcomeFallbacks();
@@ -67,6 +71,8 @@ export default function Settings() {
           <span>Reduce motion and animations</span>
         </label>
       </section>
+
+      <ReadAloudSettings />
 
       <section>
         <h2>Session defaults</h2>
