@@ -6,6 +6,7 @@ import { useProfile } from '../context/ProfileContext';
 import { getStore } from '../lib/storage';
 import { allowedSessionOptions } from '../lib/sessionPolicy';
 import { clearPersonalizationFallbacks } from '../lib/personalizationStorage';
+import { clearOutcomeFallbacks } from '../lib/outcomeStorage';
 import type { Difficulty, FontSize } from '../types';
 
 export default function Settings() {
@@ -18,6 +19,7 @@ export default function Settings() {
     if (!ok) return;
     await getStore().clear();
     clearPersonalizationFallbacks();
+    clearOutcomeFallbacks();
     sessionStorage.removeItem('session.active.v1');
     window.location.reload();
   };
@@ -117,6 +119,16 @@ export default function Settings() {
         <p>
           <Link className="settings-link" to="/baseline">
             Retake the practice check
+          </Link>
+        </p>
+        <p>
+          <Link className="settings-link" to="/functional">
+            Real-life functional practice
+          </Link>
+        </p>
+        <p>
+          <Link className="settings-link" to="/outcome-report">
+            Practice check report
           </Link>
         </p>
         <p className="muted">

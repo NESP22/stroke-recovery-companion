@@ -20,6 +20,8 @@ import Settings from './modules/Settings';
 import Install from './modules/Install';
 import Baseline from './modules/Baseline';
 import Plan from './modules/Plan';
+import FunctionalPractice from './modules/FunctionalPractice';
+import OutcomeReport from './modules/OutcomeReport';
 
 export default function App() {
   const { profile, ready } = useProfile();
@@ -53,6 +55,9 @@ export default function App() {
             <Route path="/install" element={<Install />} />
             <Route path="/baseline" element={<Baseline />} />
             <Route path="/plan" element={<Plan />} />
+            <Route path="/post-check" element={<Baseline kind="post" />} />
+            <Route path="/functional" element={<FunctionalPractice />} />
+            <Route path="/outcome-report" element={<OutcomeReport />} />
             <Route path="/evidence" element={<Evidence />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
@@ -8,18 +8,17 @@ import { useProfile } from '../context/ProfileContext';
 import { generateRound } from '../data/attention';
 import {
   BASELINE_DOMAIN_LABELS,
-  BASELINE_NAMING,
-  MEMORY_FOIL_DELAYED,
-  MEMORY_FOIL_IMMEDIATE,
-  MEMORY_WORDS,
-  ORIENTATION_QUESTIONS,
-  SCAN_TARGET,
-  SEQUENCING_QUESTIONS,
-  makeScanTrial,
   type NamingQuestion,
   type OrientationQuestion,
   type SequencingQuestion,
 } from '../data/baseline';
+import {
+  contentForForm,
+  makeScanTrial,
+  SCAN_TARGET,
+  type AssessmentFormContent,
+} from '../data/outcomeContent';
+import { goalLabel } from '../data/goals';
 import {
   buildBaselineResult,
   emptyTallies,
@@ -27,15 +26,31 @@ import {
 } from '../lib/baselineScoring';
 import { createPersonalizedPlan } from '../lib/personalization';
 import { savePersonalization } from '../lib/personalizationStorage';
-import type { BaselineDomain } from '../types';
+import {
+  GOAL_RATING_CHOICES,
+  GOAL_RATING_LABELS,
+  buildOutcomeAssessment,
+  nextForm,
+  type ScoredDomain,
+} from '../lib/outcome';
+import { loadAssessments, saveAssessment } from '../lib/outcomeStorage';
+import { uid } from '../lib/uid';
+import type {
+  AssessmentForm,
+  AssessmentKind,
+  BaselineDomain,
+  FunctionalGoalRating,
+} from '../types';
 
 /**
- * Baseline Check — the first slice of the personalized recovery plan.
+ * The "practice check" (also called the app performance check) — Phase 2 and
+ * the pre/post outcome flow. Runs as a PRE check (sets up the personalized
+ * plan) or a POST check (alternate form, feeds the change report).
  *
- * SAFETY: this is for PERSONALIZATION ONLY. It is not a validated cognitive or
- * clinical test, does not diagnose, and its answers are never shown as a
- * severity or impairment label. New/worsening symptoms are outside its scope:
- * the persistent FAST banner (see EmergencyBanner) handles emergency routing.
+ * SAFETY: this is for PERSONALIZATION and CHANGE-TRACKING ONLY. It is not a
+ * validated cognitive or clinical test, does not diagnose, and its answers are
+ * never shown as a severity or impairment label. New/worsening symptoms are
+ * outside its scope: the persistent FAST banner handles emergency routing.
  */
 
 type Step =
@@ -47,11 +62,15 @@ type Step =
   | { kind: 'naming'; item: NamingQuestion; domain: 'language' }
   | { kind: 'scan'; trial: number; domain: 'visualScanning' }
   | { kind: 'sequencing'; question: SequencingQuestion; domain: 'executive' }
-  | { kind: 'fatigue'; domain: 'fatigueTolerance' };
+  | { kind: 'fatigue'; domain: 'fatigueTolerance' }
+  | { kind: 'goal-rating'; goalId: string };
 
-function buildSteps(): Step[] {
+function buildSteps(
+  content: AssessmentFormContent,
+  goalIds: string[],
+): Step[] {
   const steps: Step[] = [{ kind: 'intro' }];
-  for (const question of ORIENTATION_QUESTIONS) {
+  for (const question of content.orientation) {
     steps.push({ kind: 'orientation', question, domain: 'orientation' });
   }
   steps.push({ kind: 'memory-encode', domain: 'memory' });
@@ -59,17 +78,20 @@ function buildSteps(): Step[] {
     steps.push({ kind: 'attention', round, domain: 'attention' });
   }
   steps.push({ kind: 'memory-recall', phase: 'immediate', domain: 'memory' });
-  for (const item of BASELINE_NAMING) {
+  for (const item of content.naming) {
     steps.push({ kind: 'naming', item, domain: 'language' });
   }
   for (let trial = 0; trial < 2; trial++) {
     steps.push({ kind: 'scan', trial, domain: 'visualScanning' });
   }
-  for (const question of SEQUENCING_QUESTIONS) {
+  for (const question of content.sequencing) {
     steps.push({ kind: 'sequencing', question, domain: 'executive' });
   }
   steps.push({ kind: 'memory-recall', phase: 'delayed', domain: 'memory' });
   steps.push({ kind: 'fatigue', domain: 'fatigueTolerance' });
+  for (const goalId of goalIds) {
+    steps.push({ kind: 'goal-rating', goalId });
+  }
   return steps;
 }
 
@@ -80,11 +102,11 @@ function domainOf(step: Step): BaselineDomain | null {
 function stepReadAloud(step: Step): string {
   switch (step.kind) {
     case 'intro':
-      return 'Set up your practice plan. This is a short, gentle check that helps the app choose practice areas for you. It is not a clinical test.';
+      return 'This is a short, gentle check that helps the app choose practice areas for you. It is not a clinical test.';
     case 'orientation':
       return `${step.question.prompt} The options are: ${step.question.options.join(', ')}.`;
     case 'memory-encode':
-      return `Please try to remember these three words: ${MEMORY_WORDS.join(', ')}.`;
+      return 'Please try to remember these three words.';
     case 'attention':
       return 'Attention task. Tap the target symbol in the grid. Take all the time you need.';
     case 'memory-recall':
@@ -99,6 +121,8 @@ function stepReadAloud(step: Step): string {
       return `What is the first step of ${step.question.activity}?`;
     case 'fatigue':
       return 'How tired do you feel right now?';
+    case 'goal-rating':
+      return `How much help do you need with ${goalLabel(step.goalId)} right now?`;
   }
 }
 
@@ -108,14 +132,25 @@ function ChoiceStep({
   options,
   correctIndex,
   emoji,
+  hint,
+  onHint,
   onAnswer,
 }: {
   prompt: string;
   options: string[];
   correctIndex: number;
   emoji?: string;
+  hint?: string;
+  onHint?: () => void;
   onAnswer: (correct: boolean) => void;
 }) {
+  const [showHint, setShowHint] = useState(false);
+  const revealHint = () => {
+    if (!showHint) {
+      setShowHint(true);
+      onHint?.();
+    }
+  };
   return (
     <>
       {emoji && (
@@ -124,6 +159,11 @@ function ChoiceStep({
         </div>
       )}
       <h2>{prompt}</h2>
+      {hint && showHint && (
+        <p className="baseline-hint" role="status">
+          Hint: {hint}
+        </p>
+      )}
       <div className="baseline-options">
         {options.map((opt, i) => (
           <button
@@ -136,6 +176,11 @@ function ChoiceStep({
           </button>
         ))}
       </div>
+      {hint && !showHint && (
+        <Button variant="quiet" onClick={revealHint}>
+          Show a hint
+        </Button>
+      )}
     </>
   );
 }
@@ -233,13 +278,16 @@ function ScanStep({
 /** Multi-select recognition recall (gentle: pick the words you remember). */
 function MemoryRecallStep({
   phase,
+  words,
+  foil,
   onSubmit,
 }: {
   phase: 'immediate' | 'delayed';
+  words: readonly string[];
+  foil: string;
   onSubmit: (correct: number, total: number) => void;
 }) {
-  const foil = phase === 'immediate' ? MEMORY_FOIL_IMMEDIATE : MEMORY_FOIL_DELAYED;
-  const options = useMemo(() => [...MEMORY_WORDS, foil], [foil]);
+  const options = useMemo(() => [...words, foil], [words, foil]);
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggle = (word: string) =>
@@ -248,8 +296,8 @@ function MemoryRecallStep({
     );
 
   const submit = () => {
-    const correct = MEMORY_WORDS.filter((w) => selected.includes(w)).length;
-    onSubmit(correct, MEMORY_WORDS.length);
+    const correct = words.filter((w) => selected.includes(w)).length;
+    onSubmit(correct, words.length);
   };
 
   return (
@@ -278,17 +326,38 @@ function MemoryRecallStep({
   );
 }
 
-export default function Baseline() {
+export default function Baseline({ kind = 'pre' }: { kind?: AssessmentKind }) {
   const { profile } = useProfile();
   const navigate = useNavigate();
 
-  const steps = useMemo(buildSteps, []);
+  const [form, setForm] = useState<AssessmentForm | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    loadAssessments().then(({ assessments }) => {
+      if (mounted) setForm(nextForm(assessments));
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const content = form ? contentForForm(form) : null;
+  const steps = useMemo(
+    () => (content ? buildSteps(content, profile.goals) : []),
+    [content, profile.goals],
+  );
+
   const [stepIndex, setStepIndex] = useState(0);
   const [tallies, setTallies] = useState<Record<BaselineDomain, DomainTally>>(emptyTallies);
   const [fatigue, setFatigue] = useState<number | null>(null);
+  const [hints, setHints] = useState<Partial<Record<ScoredDomain, number>>>({});
+  const [goalRatings, setGoalRatings] = useState<Record<string, number>>({});
 
   const step = steps[stepIndex];
   const stepCount = steps.length;
+  const title =
+    kind === 'pre' ? 'Your practice plan' : 'Follow-up practice check';
 
   const recordChoice = (domain: BaselineDomain, correct: boolean) => {
     setTallies((prev) => {
@@ -304,6 +373,10 @@ export default function Baseline() {
       };
     });
     setStepIndex((i) => i + 1);
+  };
+
+  const recordHint = (domain: ScoredDomain) => {
+    setHints((prev) => ({ ...prev, [domain]: (prev[domain] ?? 0) + 1 }));
   };
 
   const recordMemory = (correct: number, total: number) => {
@@ -335,19 +408,49 @@ export default function Baseline() {
       stoppedEarly,
       new Date().toISOString(),
     );
-    const plan = createPersonalizedPlan(baseline, profile);
-    await savePersonalization(baseline, plan);
-    navigate('/plan');
+    const ratings: FunctionalGoalRating[] = profile.goals
+      .filter((id) => goalRatings[id] !== undefined)
+      .map((id) => ({ goalId: id, rating: goalRatings[id] }));
+    const assessment = buildOutcomeAssessment({
+      kind,
+      form: form ?? 'A',
+      id: uid(),
+      completedAt: new Date().toISOString(),
+      baseline,
+      hints,
+      goalRatings: ratings,
+    });
+    await saveAssessment(assessment);
+
+    if (kind === 'pre') {
+      const plan = createPersonalizedPlan(baseline, profile);
+      await savePersonalization(baseline, plan);
+      navigate('/plan');
+    } else {
+      navigate('/outcome-report');
+    }
   };
+
+  if (!form || !content || !step) {
+    return (
+      <Page title={title} backTo="/">
+        <p className="loading">Loading…</p>
+      </Page>
+    );
+  }
 
   if (step.kind === 'intro') {
     return (
       <Page
-        title="Your practice plan"
+        title={title}
         backTo="/"
         readAloudText={stepReadAloud(step)}
       >
-        <h2>Set up your practice plan</h2>
+        <h2>
+          {kind === 'pre'
+            ? 'Set up your practice plan'
+            : 'Follow-up practice check'}
+        </h2>
         <p className="lead">
           A short, gentle check that helps this app suggest practice areas and a
           starting level for you.
@@ -372,7 +475,7 @@ export default function Baseline() {
   if (step.kind === 'fatigue') {
     return (
       <Page
-        title="Your practice plan"
+        title={title}
         backTo="/"
         readAloudText={stepReadAloud(step)}
       >
@@ -385,9 +488,52 @@ export default function Baseline() {
           highLabel="Very tired"
         />
         <div className="button-row">
-          <Button onClick={() => void finish(false)}>Finish and see my plan</Button>
+          <Button onClick={() => void finish(false)}>
+            {kind === 'pre' ? 'Finish and see my plan' : 'Finish and see my report'}
+          </Button>
           <Button variant="quiet" onClick={() => void finish(false)}>
             Skip this part
+          </Button>
+        </div>
+      </Page>
+    );
+  }
+
+  if (step.kind === 'goal-rating') {
+    const goalId = step.goalId;
+    return (
+      <Page
+        title={title}
+        backTo="/"
+        readAloudText={stepReadAloud(step)}
+      >
+        <p className="onboarding-progress" role="status">
+          Step {stepIndex + 1} of {stepCount} · Your goals
+        </p>
+        <h2>How much help do you need with this right now?</h2>
+        <p className="lead">{goalLabel(goalId)}</p>
+        <div className="baseline-options">
+          {GOAL_RATING_CHOICES.map((rating) => (
+            <button
+              key={rating}
+              type="button"
+              className={`baseline-option ${goalRatings[goalId] === rating ? 'is-selected' : ''}`}
+              onClick={() => {
+                setGoalRatings((prev) => ({ ...prev, [goalId]: rating }));
+                setStepIndex((i) => i + 1);
+              }}
+              aria-pressed={goalRatings[goalId] === rating}
+            >
+              {GOAL_RATING_LABELS[rating]}
+            </button>
+          ))}
+        </div>
+        <div className="button-row">
+          <Button variant="quiet" onClick={() => setStepIndex((i) => i + 1)}>
+            Skip this goal
+          </Button>
+          <Button variant="quiet" onClick={() => void finish(true)}>
+            Stop and finish
           </Button>
         </div>
       </Page>
@@ -399,7 +545,7 @@ export default function Baseline() {
 
   return (
     <Page
-      title="Your practice plan"
+      title={title}
       backTo="/"
       readAloudText={stepReadAloud(step)}
     >
@@ -420,7 +566,7 @@ export default function Baseline() {
         <>
           <h2>Please try to remember these three words</h2>
           <ul className="baseline-words">
-            {MEMORY_WORDS.map((w) => (
+            {content.memoryWords.map((w) => (
               <li key={w}>{w}</li>
             ))}
           </ul>
@@ -437,7 +583,12 @@ export default function Baseline() {
       )}
 
       {step.kind === 'memory-recall' && (
-        <MemoryRecallStep phase={step.phase} onSubmit={recordMemory} />
+        <MemoryRecallStep
+          phase={step.phase}
+          words={content.memoryWords}
+          foil={step.phase === 'immediate' ? content.memoryFoilImmediate : content.memoryFoilDelayed}
+          onSubmit={recordMemory}
+        />
       )}
 
       {step.kind === 'naming' && (
@@ -446,12 +597,17 @@ export default function Baseline() {
           options={step.item.options}
           correctIndex={step.item.correctIndex}
           emoji={step.item.emoji}
+          hint={step.item.hint}
+          onHint={() => recordHint('language')}
           onAnswer={(correct) => recordChoice('language', correct)}
         />
       )}
 
       {step.kind === 'scan' && (
-        <ScanStep trial={step.trial} onAnswer={(correct) => recordChoice('visualScanning', correct)} />
+        <ScanStep
+          trial={step.trial + content.scanSeedOffset}
+          onAnswer={(correct) => recordChoice('visualScanning', correct)}
+        />
       )}
 
       {step.kind === 'sequencing' && (
@@ -459,6 +615,8 @@ export default function Baseline() {
           prompt={`${step.question.activity} — what is the first step?`}
           options={step.question.options}
           correctIndex={step.question.correctIndex}
+          hint={step.question.hint}
+          onHint={() => recordHint('executive')}
           onAnswer={(correct) => recordChoice('executive', correct)}
         />
       )}

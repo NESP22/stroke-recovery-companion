@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
 import { EvidenceLink } from '../components/EvidenceLink';
+import { AdaptiveLevelNote } from '../components/AdaptiveLevelNote';
+import { useAdaptive } from '../hooks/useAdaptive';
 import { SCENARIOS } from '../data/scenarios';
 
 const STAGES = ['Goal', 'Plan', 'Do', 'Check'] as const;
 
 export default function Executive() {
+  const { level, recordAttempt } = useAdaptive('executive');
   const [scenarioIndex, setScenarioIndex] = useState(0);
   const [stage, setStage] = useState(0);
   const scenario = SCENARIOS[scenarioIndex];
@@ -15,6 +18,10 @@ export default function Executive() {
     if (stage < STAGES.length - 1) {
       setStage((s) => s + 1);
     } else {
+      // Completing a full Goal–Plan–Do–Check cycle is recorded as a completion
+      // signal (no right/wrong in this exercise), so the adaptive level here is
+      // informational only and never changes how the exercise works.
+      recordAttempt({ correct: true, assisted: false, skipped: false });
       setStage(0);
       setScenarioIndex((i) => (i + 1) % SCENARIOS.length);
     }
@@ -34,6 +41,8 @@ export default function Executive() {
         This is a thinking exercise. There are no wrong answers — the practice is
         the process.
       </p>
+
+      <AdaptiveLevelNote domain="executive" level={level} />
 
       <div className="gpdc-progress" role="status">
         {STAGES.map((s, i) => (

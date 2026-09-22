@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
 import { EvidenceLink } from '../components/EvidenceLink';
+import { AdaptiveLevelNote } from '../components/AdaptiveLevelNote';
+import { useAdaptive } from '../hooks/useAdaptive';
 import { NAMING_ITEMS } from '../data/naming';
 import { PHRASES } from '../data/phrases';
 import { COMMUNICATION_TIPS } from '../data/tips';
@@ -11,6 +13,7 @@ type Tab = 'naming' | 'phrases' | 'tips';
 
 export default function Aphasia() {
   const [tab, setTab] = useState<Tab>('naming');
+  const { level, recordAttempt } = useAdaptive('aphasia');
   const [index, setIndex] = useState(0);
   const [showCue, setShowCue] = useState(false);
   const [showSound, setShowSound] = useState(false);
@@ -19,6 +22,12 @@ export default function Aphasia() {
   const item = NAMING_ITEMS[index % NAMING_ITEMS.length];
 
   const nextItem = () => {
+    // Using any cue counts as assistance; revealing the answer is not "correct".
+    recordAttempt({
+      correct: !showWord,
+      assisted: showCue || showSound || showWord,
+      skipped: false,
+    });
     setIndex((i) => i + 1);
     setShowCue(false);
     setShowSound(false);
@@ -37,6 +46,8 @@ export default function Aphasia() {
         This is a practice aid to support your speech-language therapy. It is not a
         substitute for a speech-language pathologist.
       </p>
+
+      <AdaptiveLevelNote domain="aphasia" level={level} />
 
       <div className="tab-bar" role="tablist" aria-label="Language practice areas">
         {(

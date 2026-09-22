@@ -14,13 +14,17 @@ afterEach(() => {
   window.sessionStorage.clear();
 });
 
-function renderBaseline() {
+function renderBaseline(kind: 'pre' | 'post' = 'pre') {
   return render(
     <ProfileProvider>
-      <MemoryRouter initialEntries={['/baseline']}>
+      <MemoryRouter initialEntries={[kind === 'pre' ? '/baseline' : '/post-check']}>
         <Routes>
-          <Route path="/baseline" element={<Baseline />} />
+          <Route
+            path={kind === 'pre' ? '/baseline' : '/post-check'}
+            element={<Baseline kind={kind} />}
+          />
           <Route path="/plan" element={<div>PLAN_MARKER</div>} />
+          <Route path="/outcome-report" element={<div>REPORT_MARKER</div>} />
           <Route path="/" element={<div>HOME_MARKER</div>} />
         </Routes>
       </MemoryRouter>
@@ -29,12 +33,12 @@ function renderBaseline() {
 }
 
 describe('Baseline', () => {
-  it('renders the intro with a not-a-clinical-test note and begin/later options', () => {
+  it('renders the intro with a not-a-clinical-test note and begin/later options', async () => {
     setStore(memoryStore());
     renderBaseline();
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Your practice plan' }),
+      await screen.findByRole('heading', { level: 1, name: 'Your practice plan' }),
     ).toBeInTheDocument();
     expect(screen.getByText(/this is not a clinical assessment/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Begin' })).toBeInTheDocument();
@@ -46,7 +50,7 @@ describe('Baseline', () => {
     const user = userEvent.setup();
     renderBaseline();
 
-    await user.click(screen.getByRole('button', { name: 'Do this later' }));
+    await user.click(await screen.findByRole('button', { name: 'Do this later' }));
     expect(await screen.findByText('HOME_MARKER')).toBeInTheDocument();
 
     const loaded = await loadPersonalization();
@@ -58,7 +62,7 @@ describe('Baseline', () => {
     const user = userEvent.setup();
     renderBaseline();
 
-    await user.click(screen.getByRole('button', { name: 'Begin' }));
+    await user.click(await screen.findByRole('button', { name: 'Begin' }));
     // First step is orientation question 1.
     expect(screen.getByRole('status')).toHaveTextContent(/orientation/i);
 
@@ -85,7 +89,7 @@ describe('Baseline', () => {
     const user = userEvent.setup();
     renderBaseline();
 
-    await user.click(screen.getByRole('button', { name: 'Begin' }));
+    await user.click(await screen.findByRole('button', { name: 'Begin' }));
 
     // Orientation (3 questions).
     await user.click(screen.getByRole('button', { name: 'Monday' }));
@@ -156,7 +160,7 @@ describe('Baseline', () => {
     const user = userEvent.setup();
     renderBaseline();
 
-    await user.click(screen.getByRole('button', { name: 'Begin' }));
+    await user.click(await screen.findByRole('button', { name: 'Begin' }));
 
     // Progress is announced as a status region.
     expect(screen.getByRole('status')).toHaveTextContent(/Step 2 of/i);

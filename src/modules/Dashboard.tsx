@@ -99,6 +99,8 @@ export default function Dashboard() {
         <p className="home-links">
           <Link to="/plan">View my practice plan</Link>
           <Link to="/baseline">Retake the practice check</Link>
+          <Link to="/functional">Real-life practice</Link>
+          <Link to="/outcome-report">Practice check report</Link>
         </p>
       </section>
 

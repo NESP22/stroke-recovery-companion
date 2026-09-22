@@ -58,6 +58,8 @@ export interface NamingQuestion {
   target: string;
   options: string[];
   correctIndex: number;
+  /** Optional plain-language hint (a semantic cue), shown only if requested. */
+  hint: string;
 }
 
 // Picture/category naming using synthetic emoji "pictures" (reusing the same
@@ -69,6 +71,7 @@ export const BASELINE_NAMING: NamingQuestion[] = [
     target: 'cup',
     options: ['cup', 'book', 'hat', 'key'],
     correctIndex: 0,
+    hint: 'You drink tea or coffee from it',
   },
   {
     id: 'banana',
@@ -76,6 +79,7 @@ export const BASELINE_NAMING: NamingQuestion[] = [
     target: 'banana',
     options: ['flower', 'banana', 'watch', 'bed'],
     correctIndex: 1,
+    hint: 'A long yellow fruit',
   },
   {
     id: 'cat',
@@ -83,6 +87,7 @@ export const BASELINE_NAMING: NamingQuestion[] = [
     target: 'cat',
     options: ['bird', 'dog', 'cat', 'milk'],
     correctIndex: 2,
+    hint: 'A small animal that purrs',
   },
 ];
 
@@ -95,6 +100,8 @@ export interface SequencingQuestion {
   options: string[];
   /** Index (into `options`) of the FIRST step of the routine. */
   correctIndex: number;
+  /** Optional plain-language hint, shown only if requested. */
+  hint: string;
 }
 
 // Everyday sequencing using preset steps. Each question asks for the FIRST
@@ -107,6 +114,7 @@ export const SEQUENCING_QUESTIONS: SequencingQuestion[] = [
     steps: ['Fill the kettle with water', 'Boil the water', 'Pour the water over a tea bag'],
     options: ['Boil the water', 'Fill the kettle with water', 'Pour the water over a tea bag'],
     correctIndex: 1,
+    hint: 'The first step is about the kettle',
   },
   {
     id: 'get-dressed',
@@ -114,6 +122,7 @@ export const SEQUENCING_QUESTIONS: SequencingQuestion[] = [
     steps: ['Choose your clothes', 'Put them on', 'Put on your shoes'],
     options: ['Put on your shoes', 'Choose your clothes', 'Put them on'],
     correctIndex: 1,
+    hint: 'The first step is about choosing clothes',
   },
   {
     id: 'make-call',
@@ -121,6 +130,7 @@ export const SEQUENCING_QUESTIONS: SequencingQuestion[] = [
     steps: ['Find the phone', 'Find the number', 'Make the call'],
     options: ['Make the call', 'Find the phone', 'Find the number'],
     correctIndex: 1,
+    hint: 'The first step is about the phone',
   },
 ];
 

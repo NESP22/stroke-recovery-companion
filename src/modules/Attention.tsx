@@ -1,26 +1,39 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
 import { EvidenceLink } from '../components/EvidenceLink';
 import { generateRound } from '../data/attention';
 import { useProfile } from '../context/ProfileContext';
+import { useAdaptive } from '../hooks/useAdaptive';
+import { AdaptiveLevelNote } from '../components/AdaptiveLevelNote';
 import type { Difficulty } from '../types';
 
 export default function Attention() {
   const { profile } = useProfile();
+  const { level, recordAttempt } = useAdaptive('attention');
   const [difficulty, setDifficulty] = useState<Difficulty>(profile.difficulty);
+  const [userChose, setUserChose] = useState(false);
   const [round, setRound] = useState(0);
   const [started, setStarted] = useState(false);
   const [found, setFound] = useState(0);
+  const [missed, setMissed] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
+  // The adaptive engine's recommendation is the starting level, unless the
+  // user has explicitly chosen one.
+  useEffect(() => {
+    if (level && !userChose) setDifficulty(level);
+  }, [level, userChose]);
 
   const data = generateRound(difficulty, round * 7919 + 13);
 
   const chooseDifficulty = (d: Difficulty) => {
+    setUserChose(true);
     setDifficulty(d);
     setStarted(false);
     setRound(0);
     setFound(0);
+    setMissed(false);
     setMessage(null);
   };
 
@@ -28,8 +41,12 @@ export default function Attention() {
     if (index === data.targetIndex) {
       setFound((f) => f + 1);
       setMessage('Yes! Well done.');
+      // First-tap accuracy is the only signal; skips never count as failure.
+      recordAttempt({ correct: !missed, assisted: false, skipped: false });
+      setMissed(false);
       setRound((r) => r + 1);
     } else {
+      setMissed(true);
       setMessage('Not that one — keep looking. There is no rush.');
     }
   };
@@ -44,6 +61,8 @@ export default function Attention() {
         Find the <strong className="attention-target">{data.target}</strong>.
         Take all the time you need — there is no timer.
       </p>
+
+      <AdaptiveLevelNote domain="attention" level={level} />
 
       <fieldset className="choice-group">
         <legend>Difficulty</legend>
