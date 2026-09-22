@@ -320,6 +320,28 @@ export const EVIDENCE: EvidenceEntry[] = [
     ],
   },
   {
+    id: 'personalization',
+    title: 'Personalized practice plan & baseline check',
+    why: 'Stroke rehabilitation guidelines say to tailor sessions to the person’s goals, mood and fatigue. This app asks a few gentle, preset questions so it can suggest practice areas and a starting level that fit those goals. The suggestion is a convenience, not a medical judgement.',
+    strength: 'EXPLORATORY',
+    evidenceScope:
+      'A PERSONALIZATION / CONVENIENCE feature. There is no validated evidence that a brief in-app baseline improves recovery outcomes; the only guideline-backed inputs are tailoring to the person’s own goals and to fatigue.',
+    limitations:
+      'The baseline check is NOT a validated cognitive screen (it is not the MoCA, MMSE or any diagnostic instrument), has no norming, and cannot detect impairment, severity or change over time. The mapping from task performance to a starting level is a transparent, deterministic rule — untested for outcomes and explicitly not a clinical assessment. It must never be used to label or diagnose.',
+    appBehavior:
+      'The app offers an optional, skippable, stop-anytime baseline check whose answers only choose practice focus areas, a starting level, and a fatigue-aware session length. It stores the result on-device and never claims diagnosis, weakness, recovery prediction or clinical significance.',
+    sources: [
+      {
+        label: 'NICE NG236 — rehabilitation tailored to the person’s goals, mood and fatigue',
+        url: 'https://www.nice.org.uk/guidance/ng236',
+      },
+      {
+        label: 'VA/DoD Stroke Rehabilitation CPG 2024 — individualised, goal-directed rehabilitation',
+        url: 'https://www.healthquality.va.gov/guidelines/Rehab/stroke/',
+      },
+    ],
+  },
+  {
     id: 'accessibility',
     title: 'Accessible design',
     why: 'Larger text, fewer words, high contrast, one task per screen, voice output and no time pressure make the app easier for people with stroke-related reading, vision or thinking difficulties. Accessibility can change task performance.',

@@ -26,6 +26,7 @@ export default function Home() {
       </div>
 
       <div className="home-links">
+        <Link to="/plan">My practice plan</Link>
         <Link to="/dashboard">My progress</Link>
         <Link to="/settings">Settings</Link>
         <Link to="/install">Install on iPhone/iPad</Link>

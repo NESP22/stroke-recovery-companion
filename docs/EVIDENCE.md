@@ -54,6 +54,7 @@ driving, work. These are deliberately kept separate.
 | **Mood & fatigue check-in** | NICE NG236; VA/DoD CPG 2024 | EXPERT CONSENSUS | A 0–10 self-rating is not a validated diagnostic tool. | Records a simple score + escalation guidance; signposts to professional support. Does NOT diagnose. |
 | **Caregiver support** | Simmons-Mackie 2010; ARMed4Stroke 2024/25; ASHA | MODERATE | Mainly benefits the caregiver (burden/QoL); no patient mobility gain shown. | Communication tips, self-care reminders, escalation guidance. Does NOT claim to improve the patient's recovery. |
 | **Session length & pacing** | NICE NG236; VA/DoD CPG 2024; Liu et al. 2025; fatigue (38–77%); npj Digital Medicine 2024 | LOW | No guideline sets an app session length. "≤30 min is better" is an exploratory, confounded subgroup finding. 20–30 min = tolerability default, not an optimum. | Defaults to 15 min, caps at 30 (60 only with clinician/carer override), fatigue check, rest prompts, stop-anytime. Never claims "30 min is optimal". |
+| **Personalized plan & baseline check** (practice focus, starting level, fatigue-aware length) | NICE NG236; VA/DoD CPG 2024 | EXPLORATORY | The baseline is NOT a validated cognitive screen (not the MoCA/MMSE or any diagnostic instrument); it has no norming and cannot detect impairment, severity or change. The task→starting-level mapping is a transparent deterministic rule, untested for outcomes. Never used to label or diagnose. | Optional, skippable, stop-anytime check whose answers only choose practice focus areas, a starting level and a fatigue-aware session length. Stored on-device. No diagnosis, weakness or recovery claims. |
 | **Accessible design** | Rose 2003; aphasia-friendly materials; 2026 accessibility study | MODERATE | Modest effect (~11% comprehension gain in one study); design-led rather than trial-based. | Large targets, scalable type, high contrast, keyboard nav, screen-reader semantics, read-aloud, no time pressure. |
 | **Apple iPhone/iPad platform** | Apple/WebKit; WCAG 2.2; `05-apple-ios-ipad.md` | EXPERT CONSENSUS / PLATFORM CAPABILITY | Home Screen install is manual; Web Push is installed-PWA only; programmatic browser dictation is not reliable in Home Screen web apps. | iPhone/iPad-first PWA, safe-area support, 44px targets, zoom/scalable text, reduced motion, install guide; unsupported native capabilities remain roadmap items. |
 | **Local-first privacy** | Cloudflare HIPAA; FTC HBNR; FDA General Wellness | EXPERT CONSENSUS | Not a HIPAA-covered service (BAA would need Enterprise plan). A non-HIPAA health app still falls under FTC HBNR. | On-device storage only, no server datastore, no PHI, synthetic data, no HIPAA claim, wellness-adjunct positioning. |
@@ -80,6 +81,33 @@ Per `01-guidelines-dose.md` and `04-digital-safety-privacy.md`:
 **Policy in code (`src/lib/sessionPolicy.ts`):** default 15 minutes; ceiling
 30 minutes for self-configured use; 60-minute ceiling reachable only when
 `clinicianConfigured` is set (a clinician/carer helped set the app up).
+
+---
+
+## Personalized baseline check — explicit limitations
+
+The Version 0.2 "baseline check" (reached after onboarding, and from
+Settings / My progress) is a short, optional, skippable set of preset tasks
+across orientation, attention, memory, word-finding, visual scanning,
+sequencing and a fatigue self-rating.
+
+**This baseline is NOT a validated instrument and NOT a diagnostic cognitive
+screen.** It is not the MoCA, the MMSE, or any other screening tool, it has no
+norming or cut-offs, and it cannot detect impairment, severity, stroke
+location, recurrence, dementia, or recovery probability. Its only output is a
+transparent, deterministic mapping to:
+
+- up to three **practice focus** areas,
+- a **starting level** (gentle / standard / challenging) per area,
+- a fatigue-aware **session length** (still capped by the existing
+  `sessionPolicy`), and
+- a **daily module plan** built only from existing modules.
+
+The wording throughout is deliberately non-clinical ("practice focus",
+"starting level") — it never says "weakness", "deficit", or "severity", and it
+never predicts recovery. New or worsening neurological symptoms are out of
+scope for the baseline and are handled by the persistent FAST emergency
+banner, not the baseline flow.
 
 ---
 

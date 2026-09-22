@@ -18,6 +18,8 @@ import Dashboard from './modules/Dashboard';
 import Evidence from './modules/Evidence';
 import Settings from './modules/Settings';
 import Install from './modules/Install';
+import Baseline from './modules/Baseline';
+import Plan from './modules/Plan';
 
 export default function App() {
   const { profile, ready } = useProfile();
@@ -49,6 +51,8 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/install" element={<Install />} />
+            <Route path="/baseline" element={<Baseline />} />
+            <Route path="/plan" element={<Plan />} />
             <Route path="/evidence" element={<Evidence />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

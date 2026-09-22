@@ -33,7 +33,7 @@ export default function Onboarding() {
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
 
-  const finish = () => {
+  const finish = (nextPath: string = '/') => {
     update({
       goals,
       sessionMinutes,
@@ -47,7 +47,7 @@ export default function Onboarding() {
       reduceMotion,
       createdAt: todayISO(),
     });
-    navigate('/');
+    navigate(nextPath);
   };
 
   const next = () => setStep((s) => Math.min(s + 1, STEP_COUNT - 1));
@@ -309,9 +309,12 @@ export default function Onboarding() {
             Remember: this app supports your rehabilitation. It does not replace
             your care team.
           </p>
-          <Button onClick={finish}>Finish and start</Button>
+          <Button onClick={() => finish('/baseline')}>Set up my practice plan</Button>
           <div className="button-row">
-            <Button variant="secondary" onClick={back}>
+            <Button variant="secondary" onClick={() => finish('/')}>
+              Do this later
+            </Button>
+            <Button variant="quiet" onClick={back}>
               Back
             </Button>
           </div>

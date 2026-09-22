@@ -43,6 +43,28 @@ Every feature is backed by a written evidence trail: an in-app
   weakness, speech/language change, major vision change, severe balance
   problem, sudden confusion or severe headache → call emergency services.
 
+## Personalized practice plan (Version 0.2)
+
+A short, optional **baseline check** (offered after onboarding, and reachable
+from Settings and My progress) asks a few gentle, preset questions about
+orientation, attention, memory, word-finding, visual scanning and sequencing,
+plus a fatigue self-rating. From those answers and your chosen goals, the app
+suggests:
+
+- up to three **practice focus** areas,
+- a **starting level** (gentle / standard / challenging) per area, and
+- a fatigue-aware **session length**, still capped by the existing session
+  policy.
+
+**Limitations.** This baseline is **not a validated instrument and not a
+diagnostic cognitive screen.** It is not the MoCA, the MMSE, or any other
+screening tool; it has no norming or cut-offs and cannot detect impairment,
+severity, or recovery. It never labels anyone as mildly/moderately/severely
+impaired, never infers stroke location or recovery probability, and it uses
+non-clinical wording ("practice focus", "starting level"). The plan is stored
+on-device only and can be retaken or cleared via Clear All Data. New or
+worsening symptoms are handled by the FAST emergency banner, not this flow.
+
 ## Tech
 
 React + TypeScript + Vite (PWA), deployed to Cloudflare Pages. No backend

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Page } from '../components/Page';
 import { useProfile } from '../context/ProfileContext';
 import { useAdl } from '../hooks/useAdl';
@@ -91,6 +92,14 @@ export default function Dashboard() {
             ))}
           </ul>
         )}
+      </section>
+
+      <section>
+        <h2>Personalized practice plan</h2>
+        <p className="home-links">
+          <Link to="/plan">View my practice plan</Link>
+          <Link to="/baseline">Retake the practice check</Link>
+        </p>
       </section>
 
       <section>

@@ -18,6 +18,46 @@ export type ModuleId =
   | 'mood'
   | 'caregiver';
 
+export type BaselineDomain =
+  | 'orientation'
+  | 'attention'
+  | 'memory'
+  | 'language'
+  | 'visualScanning'
+  | 'executive'
+  | 'fatigueTolerance';
+
+export interface BaselineDomainResult {
+  domain: BaselineDomain;
+  completed: boolean;
+  correct: number | null;
+  total: number | null;
+  skipped: boolean;
+}
+
+export interface BaselineResult {
+  version: 1;
+  completedAt: string;
+  domains: BaselineDomainResult[];
+  fatigue: number | null;
+  stoppedEarly: boolean;
+}
+
+// app-task scores are personalization-only, not validated clinical scores.
+export interface PersonalizedFocus {
+  domain: Exclude<BaselineDomain, 'fatigueTolerance'>;
+  difficulty: Difficulty;
+  reason: string;
+}
+
+export interface PersonalizedPlan {
+  version: 1;
+  createdAt: string;
+  focus: PersonalizedFocus[];
+  sessionMinutes: number;
+  modules: ModuleId[];
+}
+
 export interface Profile {
   version: 1;
   /** Chosen functional goals (preset IDs only — no free text). */

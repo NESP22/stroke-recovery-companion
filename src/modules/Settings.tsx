@@ -5,6 +5,7 @@ import { EvidenceLink } from '../components/EvidenceLink';
 import { useProfile } from '../context/ProfileContext';
 import { getStore } from '../lib/storage';
 import { allowedSessionOptions } from '../lib/sessionPolicy';
+import { clearPersonalizationFallbacks } from '../lib/personalizationStorage';
 import type { Difficulty, FontSize } from '../types';
 
 export default function Settings() {
@@ -16,6 +17,7 @@ export default function Settings() {
     );
     if (!ok) return;
     await getStore().clear();
+    clearPersonalizationFallbacks();
     sessionStorage.removeItem('session.active.v1');
     window.location.reload();
   };
@@ -102,6 +104,24 @@ export default function Settings() {
           <Link className="settings-link" to="/install">
             Install on the Home Screen
           </Link>
+        </p>
+      </section>
+
+      <section>
+        <h2>Personalized practice plan</h2>
+        <p>
+          <Link className="settings-link" to="/plan">
+            View my practice plan
+          </Link>
+        </p>
+        <p>
+          <Link className="settings-link" to="/baseline">
+            Retake the practice check
+          </Link>
+        </p>
+        <p className="muted">
+          The practice check is for personalization only — it is not a clinical
+          assessment.
         </p>
       </section>
 
