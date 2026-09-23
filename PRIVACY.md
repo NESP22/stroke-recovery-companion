@@ -14,7 +14,15 @@ The app stores a small amount of structured, non-identifying data:
 - Session records (date, minutes practised, fatigue and mood scores).
 - Mood and fatigue check-ins (0–10 scores).
 - Daily checklist ticks.
-- Your settings (text size, contrast, session length, difficulty).
+- Your settings (text size, contrast, session length, difficulty, read-aloud
+  voice identifier and speed). Voice choices stay in localStorage; if storage
+  is blocked, they work for the current visit only.
+
+Read-aloud uses only English voices that the browser reports as on-device
+(`localService`). Remote voices are not offered or used, including as a
+fallback. If no local English voice is available yet, the app does not send
+text to the browser's unspecified default voice. No network TTS service is
+used, and read-aloud text or audio is not saved by the app.
 
 ## What the app does NOT collect
 

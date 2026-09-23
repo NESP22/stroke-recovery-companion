@@ -320,6 +320,94 @@ export const EVIDENCE: EvidenceEntry[] = [
     ],
   },
   {
+    id: 'personalization',
+    title: 'Personalized practice plan & baseline check',
+    why: 'Stroke rehabilitation guidelines say to tailor sessions to the person’s goals, mood and fatigue. This app asks a few gentle, preset questions so it can suggest practice areas and a starting level that fit those goals. The suggestion is a convenience, not a medical judgement.',
+    strength: 'EXPLORATORY',
+    evidenceScope:
+      'A PERSONALIZATION / CONVENIENCE feature. There is no validated evidence that a brief in-app baseline improves recovery outcomes; the only guideline-backed inputs are tailoring to the person’s own goals and to fatigue.',
+    limitations:
+      'The baseline check is NOT a validated cognitive screen (it is not the MoCA, MMSE or any diagnostic instrument), has no norming, and cannot detect impairment, severity or change over time. The mapping from task performance to a starting level is a transparent, deterministic rule — untested for outcomes and explicitly not a clinical assessment. It must never be used to label or diagnose.',
+    appBehavior:
+      'The app offers an optional, skippable, stop-anytime baseline check whose answers only choose practice focus areas, a starting level, and a fatigue-aware session length. It stores the result on-device and never claims diagnosis, weakness, recovery prediction or clinical significance.',
+    sources: [
+      {
+        label: 'NICE NG236 — rehabilitation tailored to the person’s goals, mood and fatigue',
+        url: 'https://www.nice.org.uk/guidance/ng236',
+      },
+      {
+        label: 'VA/DoD Stroke Rehabilitation CPG 2024 — individualised, goal-directed rehabilitation',
+        url: 'https://www.healthquality.va.gov/guidelines/Rehab/stroke/',
+      },
+    ],
+  },
+  {
+    id: 'adaptive',
+    title: 'Adaptive training level (per-domain)',
+    why: 'The app gently adjusts the starting difficulty of each practice area based on how the tasks have been going and how tired you have been. The rule is simple and shown to you, so you can always see why a level moved.',
+    strength: 'EXPLORATORY',
+    evidenceScope:
+      'An APP-TASK difficulty convenience. There is no validated evidence that a simple accuracy-based difficulty rule improves recovery outcomes; the only guideline-backed input is respecting fatigue (do less when tired).',
+    limitations:
+      'The adjustment is a deterministic, conservative rule (one level at a time, only after enough attempts, fatigue only holds or lowers, skipping never counts as failure) — untested for outcomes and explicitly not a clinical decision. For process-based exercises with no right/wrong answer the level is informational only.',
+    appBehavior:
+      'Tracks app-task accuracy, help/hints and completed attempts per practice area, and adjusts the starting level at most one step at a time. It never decides treatment, severity or recovery and never raises difficulty when you are very tired.',
+    sources: [
+      {
+        label: 'NICE NG236 — rehabilitation adapted to the person’s mood and fatigue',
+        url: 'https://www.nice.org.uk/guidance/ng236',
+      },
+      {
+        label: 'VA/DoD Stroke Rehabilitation CPG 2024 — individualised, goal-directed rehabilitation',
+        url: 'https://www.healthquality.va.gov/guidelines/Rehab/stroke/',
+      },
+    ],
+  },
+  {
+    id: 'functional-practice',
+    title: 'Real-life functional practice (Goal–Plan–Do–Check)',
+    why: 'Strategy training that walks through Goal, Plan, Do, Check is one of the better-supported ways to help people manage everyday tasks after stroke. This app offers preset, everyday scenarios using that structure.',
+    strength: 'MODERATE',
+    evidenceScope:
+      'STRATEGY training for everyday tasks. The positive signal comes from metacognitive strategy training studies; it is not proof of restored independence.',
+    limitations:
+      'Completing a practice task in the app is not the same as doing it in real life. The recorded completion/assistance are preset choices (an effort record), not a validated functional measure. No medication names, addresses or personal details appear in the tasks.',
+    appBehavior:
+      'Offers six preset everyday scenarios (morning routine, shopping list, appointment preparation, recipe, calendar/phone, packing) using Goal–Plan–Do–Check with preset choices only. It records structured assistance/completion enums, never a clinical independence score.',
+    sources: [
+      {
+        label: 'Cochrane 2013 (Chung) — cognitive rehabilitation for executive dysfunction',
+        url: 'https://www.cochrane.org/CD008391/STROKE_cognitive-rehabilitation-for-executive-dysfunction-in-adults-with-stroke-or-other-non-progressive-acquired-brain-damage',
+      },
+      {
+        label: 'ACRM / Cicerone 2019 — metacognitive strategy training recommendations',
+        url: 'https://www.bumc.bu.edu/neurorehabilitationlab/files/2021/04/Evidence-Based-Cognitive-Rehabilitation_Systematic-Review_2019_AuthorCopy.pdf',
+      },
+    ],
+  },
+  {
+    id: 'outcome-measurement',
+    title: 'Pre/post practice check (outcome measurement)',
+    why: 'The app offers a short before-and-after practice check so you and your team can see how these app tasks feel over time. It compares each area separately and never produces a single score.',
+    strength: 'EXPLORATORY',
+    evidenceScope:
+      'A PERSONALIZATION / CHANGE-TRACKING feature. Guidelines say clinical assessment should use valid, reliable and responsive tools; this app-specific check is explicitly NOT that — it is for personalization and self-tracking only.',
+    limitations:
+      'Changes on an app task can reflect familiarity/practice effects, day-to-day fatigue, natural recovery, other therapy, or other factors, and cannot show the app caused the change. There is deliberately no total cognitive or "recovered" score. Future clinical validation would require formal, validated instruments and independent study.',
+    appBehavior:
+      'Runs alternate A/B forms (never the same items twice in a row), compares pre vs post per domain only with transparent thresholds, shows training exposure, and reports functional-goal self-ratings separately. It never labels improvement/worsening clinically.',
+    sources: [
+      {
+        label: 'NICE NG236 — use valid, reliable and responsive tools for clinical assessment',
+        url: 'https://www.nice.org.uk/guidance/ng236',
+      },
+      {
+        label: 'VA/DoD Stroke Rehabilitation CPG 2024 — research outcomes should use validated formal tests and emphasise functional outcomes',
+        url: 'https://www.healthquality.va.gov/guidelines/Rehab/stroke/',
+      },
+    ],
+  },
+  {
     id: 'accessibility',
     title: 'Accessible design',
     why: 'Larger text, fewer words, high contrast, one task per screen, voice output and no time pressure make the app easier for people with stroke-related reading, vision or thinking difficulties. Accessibility can change task performance.',
@@ -329,7 +417,7 @@ export const EVIDENCE: EvidenceEntry[] = [
     limitations:
       'The effect of aphasia-friendly formatting is modest (one study found ~11% more knowledge). Most guidance is small-sample or design-led rather than large trials, so it is a low-risk, high-value requirement rather than a proven therapy.',
     appBehavior:
-      'The app uses large touch targets, scalable type, high-contrast option, keyboard navigation, screen-reader semantics, plain language, one task per screen, optional read-aloud, and no default time pressure.',
+      'The app uses large touch targets, scalable type, high-contrast option, keyboard navigation, screen-reader semantics, plain language, one task per screen, optional read-aloud with local English voice selection, preview/stop and speed preferences, and no default time pressure. Voice preferences are accessibility choices, not a claim of therapeutic benefit or guaranteed voice quality.',
     sources: [
       {
         label: 'Rose et al. 2003 — aphasia-friendly health information improves comprehension',

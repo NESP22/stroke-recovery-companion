@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
 import { EvidenceLink } from '../components/EvidenceLink';
+import { AdaptiveLevelNote } from '../components/AdaptiveLevelNote';
+import { useAdaptive } from '../hooks/useAdaptive';
 import {
   ERRORLESS_ITEMS,
   REMINDER_PRESETS,
@@ -22,6 +24,7 @@ function shuffled<T>(arr: T[]): T[] {
 
 export default function Memory() {
   const [mode, setMode] = useState<Mode>('spaced');
+  const { level, recordAttempt } = useAdaptive('memory');
 
   // Spaced retrieval state
   const items = useMemo(() => shuffled(SPACED_ITEMS).slice(0, 3), []);
@@ -70,6 +73,9 @@ export default function Memory() {
 
   const nextRecall = (gotIt: boolean) => {
     if (gotIt) setRemembered((r) => r + 1);
+    // Self-reported recall: remembered = correct & unassisted; needing help is
+    // an assisted attempt. Skips are never recorded as failure here.
+    recordAttempt({ correct: gotIt, assisted: !gotIt, skipped: false });
     if (schedIndex + 1 < schedule.length) {
       setSchedIndex((i) => i + 1);
       setRevealed(false);
@@ -100,6 +106,8 @@ export default function Memory() {
         These are practice techniques to help you compensate for memory
         difficulties. They do not guarantee memory improvement.
       </p>
+
+      <AdaptiveLevelNote domain="memory" level={level} />
 
       <div className="tab-bar" role="tablist" aria-label="Memory practice">
         {(

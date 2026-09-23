@@ -11,7 +11,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
-    css: false,
+    // Keep the real design system available to touch-target accessibility tests.
+    css: { include: [/index\.css/] },
     include: ['src/**/*.test.{ts,tsx}'],
   },
 });

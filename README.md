@@ -43,6 +43,55 @@ Every feature is backed by a written evidence trail: an in-app
   weakness, speech/language change, major vision change, severe balance
   problem, sudden confusion or severe headache → call emergency services.
 
+## Personalized practice plan (Version 0.2)
+
+A short, optional **baseline check** (offered after onboarding, and reachable
+from Settings and My progress) asks a few gentle, preset questions about
+orientation, attention, memory, word-finding, visual scanning and sequencing,
+plus a fatigue self-rating. From those answers and your chosen goals, the app
+suggests:
+
+- up to three **practice focus** areas,
+- a **starting level** (gentle / standard / challenging) per area, and
+- a fatigue-aware **session length**, still capped by the existing session
+  policy.
+
+**Limitations.** This baseline is **not a validated instrument and not a
+diagnostic cognitive screen.** It is not the MoCA, the MMSE, or any other
+screening tool; it has no norming or cut-offs and cannot detect impairment,
+severity, or recovery. It never labels anyone as mildly/moderately/severely
+impaired, never infers stroke location or recovery probability, and it uses
+non-clinical wording ("practice focus", "starting level"). The plan is stored
+on-device only and can be retaken or cleared via Clear All Data. New or
+worsening symptoms are handled by the FAST emergency banner, not this flow.
+
+## Adaptive practice, functional practice and outcome check (Version 0.3)
+
+Three further capabilities build on the personalized plan, all local and
+optional:
+
+- **Adaptive training** — a transparent, conservative per-domain engine that
+  nudges a starting level (gentle / standard / challenging) one step at a time
+  after enough practice, holds or lowers the level when fatigue is high, and
+  never counts a skipped attempt as failure. It never makes treatment
+  decisions.
+- **Functional practice** — Goal–Plan–Do–Check prompts for synthetic everyday
+  tasks (morning routine, a simple shopping list, preparing for an appointment,
+  a recipe sequence, and planning a short outing), tied to your chosen goals.
+  Assistance and completion are recorded as structured choices, never as a
+  clinical independence score.
+- **Pre/post "practice check"** — a repeatable check with two alternating forms
+  (A/B) so the same items are never shown twice in a row. Results are compared
+  **per domain only** (correct/attempted, hints, fatigue) and labelled
+  "higher / about the same / lower on this app task". There is **no total
+  score** and no "percentage recovered": score changes can reflect practice
+  effects, day-to-day fatigue, natural recovery or other therapy, and cannot
+  show that the app caused the change.
+
+**These are not validated or clinical assessments.** See
+`docs/OUTCOME_MEASUREMENT.md` for the full construct, limitations and the
+NICE NG236 / VA/DoD 2024 boundary the app respects.
+
 ## Tech
 
 React + TypeScript + Vite (PWA), deployed to Cloudflare Pages. No backend
@@ -81,7 +130,8 @@ npm run verify       # all of the above in one pass
   its evidence (strength, limitations, sources).
 - `src/lib/sessionPolicy.ts` — the evidence-derived session-length policy.
 - `src/modules/` — one screen per practice area.
-- `docs/` — `EVIDENCE.md` (traceability) and `RESEARCH_METHOD.md`.
+- `docs/` — `EVIDENCE.md` (traceability), `OUTCOME_MEASUREMENT.md` (the
+  pre/post check construct and limits) and `RESEARCH_METHOD.md`.
 - `scripts/check-phi.mjs` — privacy/PHI scan used by CI.
 
 ## Positioning and scope

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
 import { EvidenceLink } from '../components/EvidenceLink';
+import { useAdaptive } from '../hooks/useAdaptive';
 
 type Side = 'left' | 'right' | 'both';
 
@@ -17,10 +18,12 @@ function makeRow(side: Side, seed: number): { row: string[]; targetIndex: number
 }
 
 export default function Neglect() {
+  const { recordAttempt } = useAdaptive('neglect');
   const [side, setSide] = useState<Side>('left');
   const [seed, setSeed] = useState(0);
   const [started, setStarted] = useState(false);
   const [found, setFound] = useState(0);
+  const [missed, setMissed] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const { row, targetIndex } = makeRow(side, seed);
@@ -29,8 +32,12 @@ export default function Neglect() {
     if (i === targetIndex) {
       setFound((f) => f + 1);
       setMessage('Well done — you scanned the whole line.');
+      // First-tap accuracy is the only signal; skips never count as failure.
+      recordAttempt({ correct: !missed, assisted: false, skipped: false });
+      setMissed(false);
       setSeed((s) => s + 1);
     } else {
+      setMissed(true);
       setMessage('Keep scanning to the very end of the line. No rush.');
     }
   };
@@ -40,6 +47,7 @@ export default function Neglect() {
     setStarted(false);
     setSeed(0);
     setFound(0);
+    setMissed(false);
     setMessage(null);
   };
 

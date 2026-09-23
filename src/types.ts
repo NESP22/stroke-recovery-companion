@@ -18,6 +18,144 @@ export type ModuleId =
   | 'mood'
   | 'caregiver';
 
+export type BaselineDomain =
+  | 'orientation'
+  | 'attention'
+  | 'memory'
+  | 'language'
+  | 'visualScanning'
+  | 'executive'
+  | 'fatigueTolerance';
+
+export interface BaselineDomainResult {
+  domain: BaselineDomain;
+  completed: boolean;
+  correct: number | null;
+  total: number | null;
+  skipped: boolean;
+}
+
+export interface BaselineResult {
+  version: 1;
+  completedAt: string;
+  domains: BaselineDomainResult[];
+  fatigue: number | null;
+  stoppedEarly: boolean;
+}
+
+// app-task scores are personalization-only, not validated clinical scores.
+export interface PersonalizedFocus {
+  domain: Exclude<BaselineDomain, 'fatigueTolerance'>;
+  difficulty: Difficulty;
+  reason: string;
+}
+
+export interface PersonalizedPlan {
+  version: 1;
+  createdAt: string;
+  focus: PersonalizedFocus[];
+  sessionMinutes: number;
+  modules: ModuleId[];
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3 — transparent adaptive training (per-domain, conservative)
+// ---------------------------------------------------------------------------
+
+/** Practice modules that carry an app-task signal the adaptive engine can use. */
+export type TrainableModuleId =
+  | 'memory'
+  | 'attention'
+  | 'executive'
+  | 'aphasia'
+  | 'neglect';
+
+export interface AdaptiveObservation {
+  /** Whether the attempt succeeded (objective, or self-reported). */
+  correct: boolean;
+  /** Whether a hint or help was used. */
+  assisted: boolean;
+  /** Whether the attempt was skipped — NEVER counted as failure. */
+  skipped: boolean;
+  at: string;
+}
+
+export interface DomainAdaptiveState {
+  domain: TrainableModuleId;
+  /** Recommended starting level for this domain (gentle → standard → challenging). */
+  level: Difficulty;
+  /** Bounded rolling window of the most recent observations. */
+  recent: AdaptiveObservation[];
+  /** Cumulative non-skipped attempts. */
+  observations: number;
+  /** Cumulative skipped attempts (informational only). */
+  skipCount: number;
+  /** Most recent fatigue (0–10) recorded, if any. */
+  lastFatigue: number | null;
+  updatedAt: string;
+}
+
+export type AdaptiveStateMap = Record<TrainableModuleId, DomainAdaptiveState>;
+
+// ---------------------------------------------------------------------------
+// Phase 4 — real-life functional practice (Goal–Plan–Do–Check, preset only)
+// ---------------------------------------------------------------------------
+
+/** Structured assistance level — an enum, never a clinical independence score. */
+export type AssistanceLevel = 'independent' | 'with-prompts' | 'with-help';
+
+/** Structured completion status — an enum, never a pass/fail judgement. */
+export type CompletionStatus =
+  | 'completed'
+  | 'partially-completed'
+  | 'not-completed';
+
+export interface FunctionalAttempt {
+  taskId: string;
+  completedAt: string;
+  assistance: AssistanceLevel;
+  completion: CompletionStatus;
+}
+
+export interface FunctionalPracticeLog {
+  version: 1;
+  attempts: FunctionalAttempt[];
+}
+
+// ---------------------------------------------------------------------------
+// Pre/post app-performance checks (outcome measurement, personalization only)
+// ---------------------------------------------------------------------------
+
+export type AssessmentForm = 'A' | 'B';
+export type AssessmentKind = 'pre' | 'post';
+
+/** A preset 1–5 self-rating for one chosen functional goal (5 = most independent). */
+export interface FunctionalGoalRating {
+  goalId: string;
+  rating: number;
+}
+
+export interface DomainOutcome {
+  domain: Exclude<BaselineDomain, 'fatigueTolerance'>;
+  correct: number;
+  total: number;
+  /** Structured count of hints/assistance used during the check. */
+  hints: number;
+  skipped: boolean;
+}
+
+export interface OutcomeAssessment {
+  version: 1;
+  id: string;
+  kind: AssessmentKind;
+  form: AssessmentForm;
+  completedAt: string;
+  domains: DomainOutcome[];
+  functionalGoalRatings: FunctionalGoalRating[];
+  fatigue: number | null;
+  stoppedEarly: boolean;
+}
+
 export interface Profile {
   version: 1;
   /** Chosen functional goals (preset IDs only — no free text). */

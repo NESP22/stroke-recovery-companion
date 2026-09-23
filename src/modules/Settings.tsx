@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../components/Page';
 import { Button } from '../components/Button';
+import { ReadAloudSettings } from '../components/ReadAloudSettings';
 import { EvidenceLink } from '../components/EvidenceLink';
 import { useProfile } from '../context/ProfileContext';
 import { getStore } from '../lib/storage';
+import { clearSpeechSettings, stopSpeaking } from '../lib/speech';
 import { allowedSessionOptions } from '../lib/sessionPolicy';
+import { clearPersonalizationFallbacks } from '../lib/personalizationStorage';
+import { clearOutcomeFallbacks } from '../lib/outcomeStorage';
 import type { Difficulty, FontSize } from '../types';
 
 export default function Settings() {
@@ -15,7 +19,11 @@ export default function Settings() {
       'Clear all data on this device? This removes your goals, sessions and check-ins. It cannot be undone.',
     );
     if (!ok) return;
+    stopSpeaking();
+    clearSpeechSettings();
     await getStore().clear();
+    clearPersonalizationFallbacks();
+    clearOutcomeFallbacks();
     sessionStorage.removeItem('session.active.v1');
     window.location.reload();
   };
@@ -64,6 +72,8 @@ export default function Settings() {
         </label>
       </section>
 
+      <ReadAloudSettings />
+
       <section>
         <h2>Session defaults</h2>
         <fieldset className="choice-group">
@@ -102,6 +112,34 @@ export default function Settings() {
           <Link className="settings-link" to="/install">
             Install on the Home Screen
           </Link>
+        </p>
+      </section>
+
+      <section>
+        <h2>Personalized practice plan</h2>
+        <p>
+          <Link className="settings-link" to="/plan">
+            View my practice plan
+          </Link>
+        </p>
+        <p>
+          <Link className="settings-link" to="/baseline">
+            Retake the practice check
+          </Link>
+        </p>
+        <p>
+          <Link className="settings-link" to="/functional">
+            Real-life functional practice
+          </Link>
+        </p>
+        <p>
+          <Link className="settings-link" to="/outcome-report">
+            Practice check report
+          </Link>
+        </p>
+        <p className="muted">
+          The practice check is for personalization only — it is not a clinical
+          assessment.
         </p>
       </section>
 
