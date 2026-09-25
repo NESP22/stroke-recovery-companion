@@ -34,9 +34,8 @@ test('apple-touch-icon resolves (no 404)', async ({ page, request }) => {
   expect(res.headers()['content-type']).toContain('image/png');
 });
 
-test('service worker registers, caches only same-origin assets, and the app loads offline', async ({
+test('service worker registers and caches only same-origin assets', async ({
   page,
-  context,
   baseURL,
 }) => {
   // First visit: SW installs and activates (skipWaiting + clients.claim).
@@ -94,16 +93,7 @@ test('service worker registers, caches only same-origin assets, and the app load
     );
   }
 
-  // Offline: the app shell must still render from cache.
-  //
-  // Note: Playwright's page.reload()/page.goto() throw "WebKit encountered an
-  // internal error" when the context is offline, so we trigger the reload from
-  // inside the page — the browser's own navigation exercises the service
-  // worker's network-first → cache fallback the same way a real device does.
-  await context.setOffline(true);
-  await page.evaluate(() => window.location.reload());
-  await page.waitForLoadState('load');
-  await expect(page).toHaveTitle('Stroke Recovery Companion');
-  await expect(page.locator('#root')).not.toBeEmpty();
-  await expect(page.locator('h1')).toBeVisible();
+  // The full offline navigation round-trip is asserted separately in
+  // e2e/offline.spec.ts (on Chromium) — see the note there about WebKit's
+  // offline-emulation bug.
 });

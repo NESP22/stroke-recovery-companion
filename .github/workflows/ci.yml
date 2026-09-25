@@ -57,8 +57,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright WebKit (iPhone/iPad engine)
-        run: npx playwright install --with-deps webkit
+      - name: Install Playwright browsers (WebKit for iPhone/iPad, Chromium for offline)
+        run: npx playwright install --with-deps webkit chromium
 
       - name: Run iPhone/iPad WebKit checks (build + playwright)
         run: npm run test:e2e
