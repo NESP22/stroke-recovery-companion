@@ -188,10 +188,13 @@ h3 {
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
+  /* Let the title and the read-aloud button wrap onto separate lines instead of
+     overflowing horizontally when the title is long or the font is wide. */
+  flex-wrap: wrap;
 }
 .page-header h1 {
   margin: 0;
-  flex: 1;
+  flex: 1 1 auto;
 }
 .back-link {
   display: inline-flex;
