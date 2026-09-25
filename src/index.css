@@ -188,10 +188,13 @@ h3 {
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
+  /* Let the title and the read-aloud button wrap onto separate lines instead
+     of overflowing horizontally when the title is long or the font is wide. */
+  flex-wrap: wrap;
 }
 .page-header h1 {
   margin: 0;
-  flex: 1;
+  flex: 1 1 auto;
 }
 .back-link {
   display: inline-flex;
@@ -875,15 +878,19 @@ html[data-high-contrast='true'] .admonition.warning {
   border-radius: var(--radius-sm);
   padding: 0.5rem 0.8rem;
 }
+/* Every <summary> disclosure (escalation guidance, "Why this is here") keeps a
+   44px touch target even at the smallest (standard) text size. */
+summary {
+  min-height: 44px;
+}
+
 .escalation-list summary {
   cursor: pointer;
   font-weight: 700;
   padding: 0.65rem 0;
-  /* Disclosure summaries are tap targets on a touch-first app; keep the
-     single-line label at or above the 44px minimum (WCAG 2.5.5 / Apple HIG).
-     Symmetric vertical padding keeps the text centred without removing the
-     default disclosure marker, which display:flex would do. */
-  min-height: 44px;
+  /* Symmetric vertical padding keeps the text centred without removing the
+     default disclosure marker, which display:flex would do. The shared
+     `summary` rule above guarantees the 44px minimum. */
 }
 
 /* ---------- Onboarding ---------- */

@@ -208,10 +208,13 @@ lines.push('');
 lines.push('## Known test-environment limitations');
 lines.push('');
 lines.push(
-  '- **Offline round-trip is skipped on WebKit.** Playwright/WebKit cannot emulate offline + ' +
-    'service-worker navigation (microsoft/playwright#42775). Service-worker registration and ' +
-    'app-shell caching ARE verified on WebKit; the offline reload itself is covered on a ' +
-    'real device (see the device checklist).',
+  '- **Offline round-trip is skipped on WebKit, but is covered on Chromium.** ' +
+    'Playwright/WebKit cannot emulate offline + service-worker navigation ' +
+    '(microsoft/playwright#42775), so the WebKit offline test reports as skipped. The ' +
+    'same engine-agnostic service-worker/cache path is asserted on the `chromium-offline` ' +
+    'project (e2e/offline.spec.ts), which proves a fresh document loads offline. Service-worker ' +
+    'registration and app-shell caching ARE also verified on WebKit; the real-device offline ' +
+    'behaviour is additionally covered by the device checklist.',
 );
 lines.push(
   '- **Read-aloud button is not rendered in headless WebKit.** `window.speechSynthesis` is ' +
@@ -224,8 +227,8 @@ lines.push('## Reproducing');
 lines.push('');
 lines.push('```bash');
 lines.push('npm install');
-lines.push('npx playwright install webkit');
-lines.push('npm run test:e2e          # runs all four WebKit device/orientation profiles');
+lines.push('npx playwright install webkit chromium');
+lines.push('npm run test:e2e          # runs all four WebKit device/orientation profiles + the Chromium offline round-trip');
 lines.push('npm run report:mobile     # regenerates this report from test-results/results.json');
 lines.push('```');
 lines.push('');
