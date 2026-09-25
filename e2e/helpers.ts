@@ -5,13 +5,43 @@ import { expect, type Page } from '@playwright/test';
  * viewport). A 1px tolerance absorbs sub-pixel rounding.
  */
 export async function expectNoHorizontalScroll(page: Page): Promise<void> {
-  const { scrollWidth, clientWidth } = await page.evaluate(() => ({
-    scrollWidth: document.documentElement.scrollWidth,
-    clientWidth: document.documentElement.clientWidth,
-  }));
+  const { scrollWidth, clientWidth, culprits } = await page.evaluate(() => {
+    const cw = document.documentElement.clientWidth;
+    const sw = document.documentElement.scrollWidth;
+    const out: string[] = [];
+    if (sw > cw + 1) {
+      // Report the elements that poke past the right edge, most-overflowing
+      // first, to make the diagnosis actionable.
+      const seen = new Map<Element, DOMRect>();
+      for (const el of document.querySelectorAll<HTMLElement>('body *')) {
+        const r = el.getBoundingClientRect();
+        if (r.right > cw + 1 && r.width > 0) seen.set(el, r);
+      }
+      out.push(
+        ...Array.from(seen.entries())
+          .map(([el, r]) => ({
+            tag: el.tagName.toLowerCase(),
+            cls: typeof el.className === 'string' ? el.className : '',
+            text: (el.textContent ?? '').trim().slice(0, 40),
+            right: Math.round(r.right),
+            width: Math.round(r.width),
+          }))
+          .sort((a, b) => b.right - a.right)
+          .slice(0, 12)
+          .map(
+            (c) =>
+              `<${c.tag} class="${c.cls}"> "${c.text}" right=${c.right} width=${c.width}`,
+          ),
+      );
+    }
+    return { scrollWidth: sw, clientWidth: cw, culprits: out };
+  });
+  const detail = culprits.length
+    ? `\noverflowing elements:\n${culprits.join('\n')}`
+    : '';
   expect(
     scrollWidth,
-    `horizontal overflow: scrollWidth ${scrollWidth} > clientWidth ${clientWidth}`,
+    `horizontal overflow: scrollWidth ${scrollWidth} > clientWidth ${clientWidth}${detail}`,
   ).toBeLessThanOrEqual(clientWidth + 1);
 }
 
