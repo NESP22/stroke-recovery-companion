@@ -214,3 +214,43 @@ export async function expectTapTargets(page: Page, info: TestInfo): Promise<void
     'tap targets below the 44×44px minimum',
   ).toEqual([]);
 }
+
+// ---------------------------------------------------------------------------
+// Citation-link tap-target probe. Regression coverage for the audit defect
+// where `.evidence-sources` citation links rendered at ~20–42px tall because
+// they had no min-height, landing below the 44px touch minimum.
+// ---------------------------------------------------------------------------
+export async function expectEvidenceSourceTapTargets(
+  page: Page,
+  info: TestInfo,
+): Promise<void> {
+  const undersized = await page.evaluate(() => {
+    const out: string[] = [];
+    const links = Array.from(
+      document.querySelectorAll<HTMLElement>('.evidence-sources a'),
+    );
+    for (const el of links) {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) continue;
+      const style = window.getComputedStyle(el);
+      if (style.visibility === 'hidden' || style.display === 'none') continue;
+      const width = Math.round(r.width * 10) / 10;
+      const height = Math.round(r.height * 10) / 10;
+      if (Math.min(width, height) < 44) {
+        const text = (el.textContent ?? '').trim().replace(/\s+/g, ' ').slice(0, 60);
+        out.push(`"${text}" ${width}×${height}`);
+      }
+    }
+    return out;
+  });
+  if (undersized.length > 0) {
+    info.annotations.push({
+      type: 'defect',
+      description: `undersized evidence-source citation links: ${undersized.join(' | ')}`,
+    });
+  }
+  expect(
+    undersized,
+    'evidence-source citation links below the 44×44px minimum',
+  ).toEqual([]);
+}

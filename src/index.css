@@ -878,7 +878,12 @@ html[data-high-contrast='true'] .admonition.warning {
 .escalation-list summary {
   cursor: pointer;
   font-weight: 700;
-  padding: 0.4rem 0;
+  padding: 0.65rem 0;
+  /* Disclosure summaries are tap targets on a touch-first app; keep the
+     single-line label at or above the 44px minimum (WCAG 2.5.5 / Apple HIG).
+     Symmetric vertical padding keeps the text centred without removing the
+     default disclosure marker, which display:flex would do. */
+  min-height: 44px;
 }
 
 /* ---------- Onboarding ---------- */
@@ -920,6 +925,16 @@ html[data-high-contrast='true'] .admonition.warning {
 .evidence-sources li {
   margin: 0.3rem 0;
   overflow-wrap: break-word;
+}
+/* Citation links are tap targets on a touch-first app: keep every one at or
+   above the 44px minimum (WCAG 2.5.5 / Apple HIG), even when the 0.9rem label
+   wraps to a single line. inline-flex + align-items centers the text vertically
+   inside the min-height so the larger hit area does not look top-aligned. */
+.evidence-sources a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.25rem 0;
 }
 
 /* ---------- Research & Evidence screen ---------- */

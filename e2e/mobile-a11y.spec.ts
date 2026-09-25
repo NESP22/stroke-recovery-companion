@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   CATEGORY,
   annotate,
+  expectEvidenceSourceTapTargets,
   expectNoHorizontalScroll,
   expectTapTargets,
   gotoOnboarded,
@@ -88,6 +89,30 @@ test.describe('Apple mobile accessibility & viewport', () => {
         await expectTapTargets(page, test.info());
       }
     }
+  });
+
+  test('evidence-source citation links meet the 44×44px tap minimum', async ({
+    page,
+  }) => {
+    annotate(
+      test.info(),
+      CATEGORY.TAP_TARGETS,
+      'Open the Evidence screen "Sources" list and the "Why this is here" disclosure on a module screen; confirm every .evidence-sources citation link is at least 44×44 CSS px.',
+    );
+    await gotoOnboarded(page);
+
+    // Evidence screen: the "Sources" section lists every unique citation as a link.
+    await page.goto('/evidence');
+    await expect(page.locator('main#main h1').first()).toBeVisible();
+    await expectEvidenceSourceTapTargets(page, test.info());
+
+    // Module screen: the EvidenceLink disclosure renders the same citation links
+    // inline, so the fix must hold here too.
+    await page.goto('/orientation');
+    await expect(page.locator('main#main h1').first()).toBeVisible();
+    await page.locator('details.evidence-link summary').click();
+    await expect(page.locator('.evidence-sources a').first()).toBeVisible();
+    await expectEvidenceSourceTapTargets(page, test.info());
   });
 
   test('text scaling increases root font size and stays scroll-free', async ({ page }) => {
