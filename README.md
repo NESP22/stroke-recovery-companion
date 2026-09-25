@@ -109,7 +109,8 @@ Current web limitations are documented rather than hidden: programmatic browser
 dictation is not relied on (use the iOS keyboard microphone instead), Web Push
 is not enabled in v0.1, and App Store distribution / native-only capabilities
 remain future work. The platform research synthesis and implementation
-decisions are documented in `docs/APPLE_PLATFORM.md`.
+decisions are documented in `docs/APPLE_PLATFORM.md`, and the pre-release
+manual device pass is `docs/DEVICE_CHECKLIST.md`.
 
 ## Development
 
@@ -118,7 +119,8 @@ npm install
 npm run dev          # local dev server
 npm run lint         # ESLint
 npm run typecheck    # tsc --noEmit
-npm test             # Vitest
+npm test             # Vitest (unit/component)
+npm run test:e2e     # Playwright WebKit — iPhone/iPad portrait + landscape
 npm run check:phi    # privacy / PHI scan
 npm run build        # typecheck + production build
 npm run verify       # all of the above in one pass
